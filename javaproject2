@@ -1,0 +1,106 @@
+package javaproject2;
+import java.util.*;
+
+// Main2.java
+
+public class Main2 {
+	public static void main(String[] args) {
+        // Creating of drivers
+        List<Driver> drivers = new ArrayList<>();
+        drivers.add(new Driver("A", "Sedan", 4.0, 500));
+        drivers.add(new Driver("B", "HatchBack", 4.3, 1000));
+        drivers.add(new Driver("C", "5 Seater", 4.8, 200));
+        drivers.add(new Driver("D", "Sedan", 4.1, 700));
+        drivers.add(new Driver("E", "HatchBack", 4.7, 430));
+
+        // Create a RentARide instance
+        RentARide rentARide = new RentARide(drivers);
+
+        // Example usage
+//        double rideDistance ;
+//        String requestedCarModel;
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Car Requested :");
+        String requestedCarModel = scanner.nextLine();
+        System.out.print("Coustmer Ride Distance :");
+        Double rideDistance = scanner.nextDouble();
+        String result = rentARide.bookRide(rideDistance, requestedCarModel);
+        System.out.println("Ouput");
+        System.out.println(result);
+    }
+}
+
+
+
+// Driver.java
+package javaproject2;
+import java.util.*;
+
+
+class RentARide {
+    private List<Driver> drivers;
+
+    public RentARide(List<Driver> drivers) {
+        this.drivers = drivers;
+    }
+
+    public String bookRide(double rideDistance, String requestedCarModel) {
+        List<Driver> eligibleDrivers = new ArrayList<>();
+
+        for (Driver driver : drivers) {
+            if (driver.getRating() < 4) {
+                continue; // Skip drivers with a rating lower than 4
+            }
+
+            if (!driver.getCarModel().equalsIgnoreCase(requestedCarModel)) {
+                continue; // Skip drivers with a different car model
+            }
+
+            eligibleDrivers.add(driver);
+        }
+
+        if (eligibleDrivers.isEmpty()) {
+            return "No available drivers for the requested car model.";
+        }
+
+        Driver closestDriver = eligibleDrivers.get(0);
+        for (Driver driver : eligibleDrivers) {
+            if (driver.getDistanceFromCustomer() < closestDriver.getDistanceFromCustomer()) {
+                closestDriver = driver;
+            }
+        }
+
+        double charge = rideDistance * 8;
+        return "Driver " + closestDriver.getName() + " will get you to the destination.\n"
+                + "Your charge will be Rs " + charge + "("+rideDistance+"*8)";
+    }
+}
+public class Driver {
+    private String name;
+    private String carModel;
+    private double rating;
+    private double distanceFromCustomer;
+
+    public Driver(String name, String carModel, double rating, double distanceFromCustomer) {
+        this.name = name;
+        this.carModel = carModel;
+        this.rating = rating;
+        this.distanceFromCustomer = distanceFromCustomer;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public String getCarModel() {
+        return this.carModel;
+    }
+
+    public double getRating() {
+        return this.rating;
+    }
+
+    public double getDistanceFromCustomer() {
+        return this.distanceFromCustomer;
+    }
+}
